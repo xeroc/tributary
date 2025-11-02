@@ -1,7 +1,7 @@
 import { PublicKey } from "@solana/web3.js";
 import { BN } from "@coral-xyz/anchor";
 import { Button } from "@heroui/button";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWallet, WalletContextState } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import {
   useCreateSubscription,
@@ -27,6 +27,7 @@ interface SubscriptionButtonProps {
   disabled?: boolean;
   radius?: "none" | "sm" | "md" | "lg" | "full" | undefined;
   size?: "sm" | "md" | "lg" | undefined;
+  wallet?: WalletContextState | undefined;
   onSuccess?: (result: CreateSubscriptionResult) => void;
   onError?: (error: Error) => void;
 }
@@ -42,6 +43,7 @@ export function SubscriptionButton({
   memo,
   startTime,
   approvalAmount,
+  wallet,
   executeImmediately = true,
   label = "Subscribe",
   className = "",
@@ -51,7 +53,7 @@ export function SubscriptionButton({
   onSuccess,
   onError,
 }: SubscriptionButtonProps) {
-  const wallet = useWallet();
+  wallet = wallet ?? useWallet();
   const { createSubscription, loading } = useCreateSubscription();
 
   const handleClick = async () => {
