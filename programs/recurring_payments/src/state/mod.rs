@@ -297,6 +297,14 @@ pub struct GatewaySignerChanged {
     pub new_signer: Pubkey,
 }
 
+/// An event that is thrown when a gateway fee recipient is changed
+#[event]
+pub struct GatewayFeeRecipientChanged {
+    pub gateway: Pubkey,
+    pub old_fee_recipient: Pubkey,
+    pub new_fee_recipient: Pubkey,
+}
+
 /// An event that is thrown when a payment policy status is changed
 #[event]
 pub struct PaymentPolicyStatusChanged {

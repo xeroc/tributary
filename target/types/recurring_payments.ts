@@ -14,6 +14,54 @@ export type RecurringPayments = {
   },
   "instructions": [
     {
+      "name": "changeGatewayFeeRecipient",
+      "discriminator": [
+        73,
+        254,
+        67,
+        5,
+        32,
+        147,
+        202,
+        101
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "gateway",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  116,
+                  101,
+                  119,
+                  97,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ]
+          }
+        },
+        {
+          "name": "newFeeRecipient"
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "changeGatewaySigner",
       "discriminator": [
         212,
@@ -927,6 +975,19 @@ export type RecurringPayments = {
   ],
   "events": [
     {
+      "name": "gatewayFeeRecipientChanged",
+      "discriminator": [
+        105,
+        68,
+        6,
+        243,
+        153,
+        138,
+        169,
+        146
+      ]
+    },
+    {
       "name": "gatewaySignerChanged",
       "discriminator": [
         123,
@@ -1112,6 +1173,29 @@ export type RecurringPayments = {
     }
   ],
   "types": [
+    {
+      "name": "gatewayFeeRecipientChanged",
+      "docs": [
+        "An event that is thrown when a gateway fee recipient is changed"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "gateway",
+            "type": "pubkey"
+          },
+          {
+            "name": "oldFeeRecipient",
+            "type": "pubkey"
+          },
+          {
+            "name": "newFeeRecipient",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
     {
       "name": "gatewaySignerChanged",
       "docs": [

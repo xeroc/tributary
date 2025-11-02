@@ -80,4 +80,8 @@ pub mod recurring_payments {
     pub fn change_gateway_signer(ctx: Context<ChangeGatewaySigner>) -> Result<()> {
         instructions::change_gateway_signer::handler_change_gateway_signer(ctx)
     }
+
+    pub fn change_gateway_fee_recipient(ctx: Context<ChangeGatewayFeeRecipient>) -> Result<()> {
+        instructions::change_gateway_fee_recipient::handler_change_gateway_fee_recipient(ctx)
+    }
 }

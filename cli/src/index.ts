@@ -570,4 +570,36 @@ program
     }
   });
 
+program
+  .command("change-gateway-fee-recipient")
+  .description("Change the fee recipient for a payment gateway")
+  .requiredOption("-a, --authority <pubkey>", "Gateway authority public key")
+  .requiredOption(
+    "-r, --new-fee-recipient <pubkey>",
+    "New fee recipient public key"
+  )
+  .action(async (options) => {
+    try {
+      const sdk = createSDK(
+        program.opts().connectionUrl,
+        program.opts().keypath
+      );
+      const authority = new PublicKey(options.authority);
+      const newFeeRecipient = new PublicKey(options.newFeeRecipient);
+
+      const instruction = await sdk.changeGatewayFeeRecipient(
+        authority,
+        newFeeRecipient
+      );
+      const tx = new anchor.web3.Transaction().add(instruction);
+      const signature = await sdk.provider.sendAndConfirm(tx);
+
+      console.log("Gateway fee recipient changed successfully!");
+      console.log("Transaction signature:", signature);
+    } catch (error) {
+      console.error("Error changing gateway fee recipient:", error);
+      process.exit(1);
+    }
+  });
+
 program.parse();

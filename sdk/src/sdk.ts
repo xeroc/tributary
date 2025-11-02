@@ -582,6 +582,25 @@ export class Tributary {
       .instruction();
   }
 
+  async changeGatewayFeeRecipient(
+    gatewayAuthority: PublicKey,
+    newFeeRecipient: PublicKey
+  ): Promise<TransactionInstruction> {
+    const authority = this.provider.publicKey;
+    const { address: gatewayPda } = this.getGatewayPda(gatewayAuthority);
+
+    const accounts = {
+      authority: authority,
+      gateway: gatewayPda,
+      newFeeRecipient: newFeeRecipient,
+    };
+
+    return await this.program.methods
+      .changeGatewayFeeRecipient()
+      .accountsStrict(accounts)
+      .instruction();
+  }
+
   // Query methods
   async getAllPaymentGateway(): Promise<
     Array<{ publicKey: PublicKey; account: PaymentGateway }>

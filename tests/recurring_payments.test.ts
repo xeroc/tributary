@@ -881,4 +881,33 @@ describe("Recurring Payments", () => {
     expect(updatedGateway!.signer).toEqual(newSigner.publicKey);
     expect(updatedGateway!.authority).toEqual(gatewayAuthority.publicKey); // authority should remain unchanged
   });
+
+  test("Change gateway fee recipient", async () => {
+    // Create a new fee recipient keypair
+    const newFeeRecipient = Keypair.generate();
+    await fund(newFeeRecipient.publicKey, 1);
+
+    // Get initial gateway state
+    const initialGateway = await sdk.getPaymentGateway(gatewayPDA);
+    expect(initialGateway!.feeRecipient).toEqual(feeRecipient.publicKey);
+
+    // Update SDK to use gateway authority wallet
+    await sdk.updateWallet(new anchor.Wallet(gatewayAuthority));
+
+    // Change the gateway fee recipient
+    const changeFeeRecipientIx = await sdk.changeGatewayFeeRecipient(
+      gatewayAuthority.publicKey,
+      newFeeRecipient.publicKey
+    );
+    const tx = new Transaction().add(changeFeeRecipientIx);
+
+    await sendAndConfirmTransaction(connection, tx, [gatewayAuthority], {
+      commitment: "processed" as Commitment,
+    });
+
+    // Verify the gateway fee recipient was updated
+    const updatedGateway = await sdk.getPaymentGateway(gatewayPDA);
+    expect(updatedGateway!.feeRecipient).toEqual(newFeeRecipient.publicKey);
+    expect(updatedGateway!.authority).toEqual(gatewayAuthority.publicKey); // authority should remain unchanged
+  });
 });

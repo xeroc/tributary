@@ -8,6 +8,54 @@
   },
   "instructions": [
     {
+      "name": "change_gateway_fee_recipient",
+      "discriminator": [
+        73,
+        254,
+        67,
+        5,
+        32,
+        147,
+        202,
+        101
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "gateway",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  116,
+                  101,
+                  119,
+                  97,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ]
+          }
+        },
+        {
+          "name": "new_fee_recipient"
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "change_gateway_signer",
       "discriminator": [
         212,
@@ -921,6 +969,19 @@
   ],
   "events": [
     {
+      "name": "GatewayFeeRecipientChanged",
+      "discriminator": [
+        105,
+        68,
+        6,
+        243,
+        153,
+        138,
+        169,
+        146
+      ]
+    },
+    {
       "name": "GatewaySignerChanged",
       "discriminator": [
         123,
@@ -1106,6 +1167,29 @@
     }
   ],
   "types": [
+    {
+      "name": "GatewayFeeRecipientChanged",
+      "docs": [
+        "An event that is thrown when a gateway fee recipient is changed"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "gateway",
+            "type": "pubkey"
+          },
+          {
+            "name": "old_fee_recipient",
+            "type": "pubkey"
+          },
+          {
+            "name": "new_fee_recipient",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
     {
       "name": "GatewaySignerChanged",
       "docs": [
