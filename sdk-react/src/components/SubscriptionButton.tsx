@@ -1,8 +1,6 @@
 import { PublicKey } from "@solana/web3.js";
 import { BN } from "@coral-xyz/anchor";
 import { Button } from "@heroui/button";
-import { useWallet, WalletContextState } from "@solana/wallet-adapter-react";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import {
   useCreateSubscription,
   PaymentInterval,
@@ -27,7 +25,6 @@ interface SubscriptionButtonProps {
   disabled?: boolean;
   radius?: "none" | "sm" | "md" | "lg" | "full" | undefined;
   size?: "sm" | "md" | "lg" | undefined;
-  wallet?: WalletContextState | undefined;
   onSuccess?: (result: CreateSubscriptionResult) => void;
   onError?: (error: Error) => void;
 }
@@ -43,7 +40,6 @@ export function SubscriptionButton({
   memo,
   startTime,
   approvalAmount,
-  wallet,
   executeImmediately = true,
   label = "Subscribe",
   className = "",
@@ -53,7 +49,6 @@ export function SubscriptionButton({
   onSuccess,
   onError,
 }: SubscriptionButtonProps) {
-  wallet = wallet ?? useWallet();
   const { createSubscription, loading } = useCreateSubscription();
 
   const handleClick = async () => {
@@ -79,11 +74,6 @@ export function SubscriptionButton({
 
   const isDisabled = disabled || loading;
 
-  // If wallet is not connected, show connect wallet button
-  if (!wallet.connected) {
-    return <WalletMultiButton />;
-  }
-
   return (
     <div className="flex flex-col items-center gap-2">
       <Button
@@ -96,14 +86,6 @@ export function SubscriptionButton({
         {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
         {loading ? "Creating Subscription..." : label}
       </Button>
-      {wallet.publicKey && (
-        <button
-          onClick={() => wallet.disconnect()}
-          className="text-sm text-gray-500 hover:text-gray-700 underline cursor-pointer"
-        >
-          Change wallet
-        </button>
-      )}
     </div>
   );
 }
