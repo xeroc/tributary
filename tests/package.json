@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "@types/bn.js": "^5.1.5",
+    "@types/bn.js": "^5.2.0",
     "@types/jest": "^29.0.3",
     "jest": "^29.0.3",
     "ts-jest": "^29.0.2",

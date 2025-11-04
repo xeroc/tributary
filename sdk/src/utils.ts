@@ -1,5 +1,4 @@
-import * as anchor from "@coral-xyz/anchor";
-const BN = anchor.BN;
+import BN from "bn.js";
 import { PaymentFrequency, PaymentFrequencyString } from "./types";
 
 export function encodeMemo(memo: string, size: number = 64): number[] {

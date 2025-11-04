@@ -12,6 +12,7 @@ import {
   TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
 import * as anchor from "@coral-xyz/anchor";
+import BN from "bn.js";
 import {
   getConfigPda,
   getGatewayPda,
@@ -134,12 +135,12 @@ export class Tributary {
     tokenMint: PublicKey,
     recipient: PublicKey,
     gateway: PublicKey,
-    amount: anchor.BN,
+    amount: BN,
     autoRenew: boolean,
     maxRenewals: number | null,
     paymentFrequency: PaymentFrequency,
     memo: number[],
-    startTime?: anchor.BN | null
+    startTime?: BN | null
   ): Promise<TransactionInstruction> {
     const user = this.provider.publicKey;
     const { address: userPaymentPda } = this.getUserPaymentPda(user, tokenMint);
@@ -150,8 +151,7 @@ export class Tributary {
       policyId = userPayment.activePoliciesCount + 1;
     }
     const paymentPolicy = this.getPaymentPolicyPda(userPaymentPda, policyId);
-    const nextPaymentDue =
-      startTime || new anchor.BN(Math.floor(Date.now() / 1000));
+    const nextPaymentDue = startTime || new BN(Math.floor(Date.now() / 1000));
     const policyType: PolicyType = {
       subscription: {
         amount: amount,
@@ -181,13 +181,13 @@ export class Tributary {
     tokenMint: PublicKey,
     recipient: PublicKey,
     gateway: PublicKey,
-    amount: anchor.BN,
+    amount: BN,
     autoRenew: boolean,
     maxRenewals: number | null,
     paymentFrequency: PaymentFrequency,
     memo: number[],
-    startTime?: anchor.BN | null,
-    approvalAmount?: anchor.BN,
+    startTime?: BN | null,
+    approvalAmount?: BN,
     executeImmediately?: boolean
   ): Promise<TransactionInstruction[]> {
     const user = this.provider.publicKey;
@@ -227,8 +227,7 @@ export class Tributary {
     }
 
     // Build policy type
-    const nextPaymentDue =
-      startTime || new anchor.BN(Math.floor(Date.now() / 1000));
+    const nextPaymentDue = startTime || new BN(Math.floor(Date.now() / 1000));
     const policyType: PolicyType = {
       subscription: {
         amount: amount,

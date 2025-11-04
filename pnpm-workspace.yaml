@@ -8,3 +8,4 @@ packages:
   - "tests"
   - "scheduler"
   - "cli"
+  - "x402"

@@ -3,6 +3,7 @@ import { PublicKey } from "@solana/web3.js";
 import * as anchor from "@coral-xyz/anchor";
 import { SEEDS } from "./constants";
 import type { PdaResult } from "./types";
+import BN from "bn.js";
 
 export function getConfigPda(programId: PublicKey): PdaResult {
   const [address, bump] = PublicKey.findProgramAddressSync(
@@ -44,7 +45,7 @@ export function getPaymentPolicyPda(
     [
       Buffer.from(SEEDS.PAYMENT_POLICY),
       userPayment.toBuffer(),
-      new anchor.BN(policyId).toArrayLike(Buffer, "le", 4),
+      new BN(policyId).toArrayLike(Buffer, "le", 4),
     ],
     programId
   );
