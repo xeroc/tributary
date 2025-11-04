@@ -1,4 +1,4 @@
-# How Tributary Works
+# Basics
 
 Tributary enables automated recurring payments on Solana through token delegation - users approve payments once, and the protocol handles execution automatically.
 
@@ -13,14 +13,14 @@ Tributary enables automated recurring payments on Solana through token delegatio
 
 ### End Users
 
-**Getting Started with Payments**
+#### Getting Started with Payments
 
 - Connect your Solana wallet (Phantom, Solflare, etc.)
 - Choose a payment provider service
 - Approve one-time delegation for your desired payment schedule
 - Payments execute automatically - no more manual transactions!
 
-**Managing Your Payments**
+#### Managing Your Payments
 
 - View all active subscriptions in your provider's dashboard
 - Pause, modify, or cancel payments anytime
@@ -28,14 +28,14 @@ Tributary enables automated recurring payments on Solana through token delegatio
 
 ### Payment Providers
 
-**Building on Tributary**
+#### Building on Tributary
 
 - Install the SDK: `npm install @tributary-so/sdk @tributary-so/sdk-react`
 - Create payment policies for your users
 - Handle onboarding, webhooks, and customer support
 - Earn fees on payment volume
 
-**Provider Examples:**
+#### Provider Examples
 
 - SaaS subscription platforms
 - Creator economy services
@@ -46,56 +46,25 @@ Tributary enables automated recurring payments on Solana through token delegatio
 
 ### Protocol Developers
 
-**Technical Implementation**
+#### Technical Implementation
 
 - **Smart Contracts**: Rust/Anchor programs handling payment logic
 - **Token Delegation**: Solana's native delegation for secure, automatic withdrawals
 - **Payment Policies**: Configurable rules for different payment types
 - **Multi-Token Support**: Any SPL token, not just USDC
 
-**Supported Payment Types:**
+#### Supported Payment Types
 
 - Subscriptions (fixed recurring amounts)
+
+#### Future Payment Types
+
 - Installments (scheduled partial payments)
 - Usage-based (variable amounts by consumption)
 - Membership dues (regular membership fees)
 - Donations (ongoing creator support)
 
 [Technical architecture details →](architecture.md)
-
-## 🚀 Quick Start
-
-### For Users
-
-1. Choose a Tributary-powered payment service
-2. Connect your wallet and approve delegation
-3. Set up your payment schedule
-4. Enjoy automated payments!
-
-### For Developers
-
-```bash
-# Install SDK
-npm install @tributary-so/sdk
-
-# Basic usage
-import { Tributary } from '@tributary-so/sdk';
-
-const tributary = new Tributary({
-  connection: solanaConnection,
-  wallet: userWallet
-});
-
-// Create subscription
-await tributary.createSubscription({
-  amount: new BN(10_000_000), // 10 USDC
-  interval: PaymentInterval.Monthly,
-  recipient: merchantWallet
-});
-```
-
-!!! warning "🏗️ Work in Progress"
-SDK interfaces are under active development and may change.
 
 ## 📊 Key Benefits
 
