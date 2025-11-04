@@ -37,7 +37,6 @@ async function run() {
       gateway: string;
       tokenMint: string;
       amount: number;
-      amountUSDC: number;
       paymentFrequency: string;
       paymentFrequencyCustom: number;
       autoRenew: boolean;
@@ -63,7 +62,7 @@ async function run() {
   console.log(`  Token Mint: ${q.subscription.tokenMint}`);
   console.log(
     `  Amount: ${
-      q.subscription.amountUSDC
+      q.subscription.amount / 1000000
     } USDC (${amount.toString()} smallest units)`
   );
   console.log(`  Frequency: ${paymentFrequency}`);
@@ -89,7 +88,9 @@ async function run() {
 
   if (Number(balance.value.amount) < amount.toNumber()) {
     throw new Error(
-      `Insufficient USDC balance. Have: ${balance.value.uiAmountString}, Need: ${q.subscription.amountUSDC}`
+      `Insufficient USDC balance. Have: ${
+        balance.value.uiAmountString
+      }, Need: ${q.subscription.amount / 100000}`
     );
   }
 
@@ -164,7 +165,6 @@ async function run() {
       recipient: string;
       gateway: string;
       amount: number;
-      amountUSDC: number;
       signature?: string;
       explorerUrl?: string;
     };

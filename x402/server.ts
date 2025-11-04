@@ -193,7 +193,6 @@ app.get("/premium", async (req, res) => {
             recipient: RECIPIENT_WALLET,
             gateway: gatewayPda.toBase58(),
             amount: SUBSCRIPTION_AMOUNT,
-            amountUSDC: SUBSCRIPTION_AMOUNT / 1000000,
           },
         });
       }
@@ -280,7 +279,6 @@ app.get("/premium", async (req, res) => {
           recipient: RECIPIENT_WALLET,
           gateway: gatewayPda.toBase58(),
           amount: SUBSCRIPTION_AMOUNT,
-          amountUSDC: SUBSCRIPTION_AMOUNT / 1000000,
           explorerUrl: `https://explorer.solana.com/tx/${signature}?cluster=devnet`,
         },
       });
@@ -302,7 +300,6 @@ app.get("/premium", async (req, res) => {
       gateway: gatewayPda.toBase58(),
       tokenMint: TOKEN_MINT,
       amount: SUBSCRIPTION_AMOUNT,
-      amountUSDC: SUBSCRIPTION_AMOUNT / 1000000,
       paymentFrequency: PAYMENT_FREQUENCY,
       autoRenew: AUTO_RENEW,
       maxRenewals: MAX_RENEWALS,
