@@ -22,6 +22,7 @@ if (!KEYPAIR_PATH) {
 const connection = new Connection(RPC_URL, "confirmed");
 const keypairData = JSON.parse(readFileSync(KEYPAIR_PATH, "utf-8"));
 const payer = Keypair.fromSecretKey(Uint8Array.from(keypairData));
+console.log(`Signer: ${payer.publicKey.toString()}`);
 
 // Initialize SDK
 const wallet = new anchor.Wallet(payer);
@@ -160,12 +161,12 @@ async function run() {
     data?: string;
     error?: string;
     subscriptionDetails?: {
-      signature: string;
       recipient: string;
       gateway: string;
       amount: number;
       amountUSDC: number;
-      explorerUrl: string;
+      signature?: string;
+      explorerUrl?: string;
     };
   };
 
@@ -197,8 +198,11 @@ async function run() {
       }
     }
 
-    console.log("\n🔗 View transaction on Solana Explorer:");
-    console.log(result.subscriptionDetails.explorerUrl);
+    if (result.subscriptionDetails.explorerUrl) {
+      // Not available if subscription already existed
+      console.log("\n🔗 View transaction on Solana Explorer:");
+      console.log(result.subscriptionDetails.explorerUrl);
+    }
   }
 }
 
