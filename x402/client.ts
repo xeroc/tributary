@@ -3,6 +3,7 @@ import { getOrCreateAssociatedTokenAccount } from "@solana/spl-token";
 import fetch from "node-fetch";
 import { readFileSync } from "fs";
 import {
+  createMemoBuffer,
   getPaymentFrequency,
   PaymentFrequencyString,
   Tributary,
@@ -113,7 +114,7 @@ async function run() {
       paymentFrequency as PaymentFrequencyString,
       paymentFrequencyCustom
     ),
-    [], // memo
+    createMemoBuffer("x402 subscription"), // memo
     undefined, // startTime
     amount, // approvalAmount
     true // executeImmediately
