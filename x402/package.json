@@ -1,0 +1,43 @@
+{
+  "name": "@tributary-so/x402",
+  "scripts": {
+    "build": "rm -rf dist && tsc -b",
+    "ci": "npm run build && npm run lint && npm run format:check",
+    "dev": "npx tsx src/index.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint ."
+  },
+  "description": "x402 example implementation",
+  "keywords": [
+    "solana-web3js",
+    "typescript"
+  ],
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.31.0",
+    "@solana/spl-token": "^0.4.13",
+    "@solana/web3.js": "^1.98.4",
+    "@tributary-so/sdk": "workspace:*",
+    "@types/express": "^5.0.5",
+    "bn.js": "^5.2.2",
+    "express": "^5.1.0",
+    "node-fetch": "^3.3.2",
+    "tsx": "^4.20.6"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.35.0",
+    "@types/bn.js": "^5.2.0",
+    "@types/node": "^24.5.2",
+    "eslint": "^9.35.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.4.0",
+    "prettier": "^2.6.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.44.0"
+  },
+  "main": "./dist/sdk/src/index.js"
+}
