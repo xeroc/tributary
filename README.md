@@ -11,9 +11,11 @@ Tributary - a river or stream that flows into a larget river or a lake
 ## Setup & Run
 
 ```bash
-gh repo clone xeroc/tributary
-# or
-git clone https://github.com/xeroc/tributary
+git clone https://github.com/tributary-so/tributary
+
+# Contract
+anchor build
+anchor test
 
 cd tributary
 pnpm install
@@ -27,3 +29,8 @@ pnpm build
 cd ../app
 pnpm run dev
 ```
+
+## x402
+
+We provide a demo implementation for x402 to use Tributary subscriptions within
+the x402 payment required ecosystem. [Go check it out](./x402/)
