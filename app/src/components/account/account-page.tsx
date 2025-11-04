@@ -7,18 +7,14 @@ import { decodeMemo, type PaymentPolicy, type UserPayment, type PaymentGateway }
 import { Play, Pause, Trash2, RotateCcw, Copy, Check } from '../../icons'
 import { toast } from 'sonner'
 import { formatDistanceToNow, formatDuration, intervalToDuration } from 'date-fns'
-import { getMint } from '@solana/spl-token'
 import { PublicKeyComponent } from '../ui/public-key'
+import { getTokenPrecisionAtom, getTokenSymbolAtom } from '@/lib/token-store'
+import { useAtomValue } from 'jotai'
 
 interface UserPaymentWithPolicies {
   userPaymentAddress: PublicKey
   userPayment: UserPayment
   policies: Array<{ publicKey: PublicKey; account: PaymentPolicy }>
-}
-
-interface TokenInfo {
-  decimals: number
-  symbol?: string
 }
 
 export default function AccountPage() {
@@ -29,11 +25,12 @@ export default function AccountPage() {
   const [loaded, setLoaded] = useState(false)
   const [userPayments, setUserPayments] = useState<UserPaymentWithPolicies[]>([])
   const [selectedPolicy, setSelectedPolicy] = useState<{ publicKey: PublicKey; account: PaymentPolicy } | null>(null)
-  const [tokenInfoCache, setTokenInfoCache] = useState<Map<string, TokenInfo>>(new Map())
   const [executingPayments, setExecutingPayments] = useState<Set<string>>(new Set())
   const [togglingPolicies, setTogglingPolicies] = useState<Set<string>>(new Set())
   const [deletingPolicies, setDeletingPolicies] = useState<Set<string>>(new Set())
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null)
+  const getTokenSymbol = useAtomValue(getTokenSymbolAtom)
+  const getTokenPrecision = useAtomValue(getTokenPrecisionAtom)
 
   useEffect(() => {
     if (wallet.publicKey?.toString()) {
@@ -49,7 +46,6 @@ export default function AccountPage() {
         setLoading(true)
         const allUserPayments = await sdk.getAllUserPaymentsByOwner(wallet.publicKey)
         const userPaymentMap = new Map<string, UserPaymentWithPolicies>()
-        const tokenInfoMap = new Map<string, TokenInfo>()
         for (const userPayment of allUserPayments) {
           const policies = await sdk.getPaymentPoliciesByUser(userPayment.publicKey)
           for (const policy of policies) {
@@ -65,15 +61,6 @@ export default function AccountPage() {
                   userPayment,
                   policies: [],
                 })
-                const mintAddress = userPayment.tokenMint.toString()
-                if (!tokenInfoMap.has(mintAddress)) {
-                  try {
-                    const mintInfo = await getMint(connection, userPayment.tokenMint)
-                    tokenInfoMap.set(mintAddress, { decimals: mintInfo.decimals, symbol: 'TOKEN' })
-                  } catch (err) {
-                    console.error('Error fetching mint info:', err)
-                  }
-                }
               }
             }
             const entry = userPaymentMap.get(userPaymentAddress)
@@ -82,9 +69,7 @@ export default function AccountPage() {
             }
           }
         }
-        tokenInfoMap.set('4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU', { decimals: 6, symbol: 'USDC' })
         setUserPayments(Array.from(userPaymentMap.values()))
-        setTokenInfoCache(tokenInfoMap)
         if (Array.from(userPaymentMap.values()).length > 0) {
           const firstPolicy = Array.from(userPaymentMap.values())[0].policies[0]
           setSelectedPolicy(firstPolicy)
@@ -109,17 +94,16 @@ export default function AccountPage() {
 
   const formatAmount = (rawAmount: string | null, tokenMint: PublicKey): string => {
     if (!rawAmount) return 'N/A'
+    const symbol = getTokenSymbol(tokenMint.toString())
+    const precision = getTokenPrecision(tokenMint.toString())
 
-    const tokenInfo = tokenInfoCache.get(tokenMint.toString())
-    if (!tokenInfo) return rawAmount
-
-    const amount = Number(rawAmount) / Math.pow(10, tokenInfo.decimals)
+    const amount = Number(rawAmount) / Math.pow(10, precision)
     const formattedAmount = amount.toLocaleString(undefined, {
       minimumFractionDigits: 0,
-      maximumFractionDigits: tokenInfo.decimals,
+      maximumFractionDigits: precision,
     })
 
-    return tokenInfo.symbol ? `${formattedAmount} ${tokenInfo.symbol}` : formattedAmount
+    return `${formattedAmount} ${symbol}`
   }
 
   const getInterval = (policy: PaymentPolicy) => {
@@ -367,9 +351,7 @@ export default function AccountPage() {
               <div>
                 <div className="h-12 flex items-center justify-between px-4 border-b border-gray-200">
                   <div className="flex items-center gap-2">
-                    <span className="uppercase text-sm">
-                      {tokenInfoCache.get(userPayment.tokenMint.toString())?.symbol ?? 'unknown'}
-                    </span>
+                    <span className="uppercase text-sm">{getTokenSymbol(userPayment.tokenMint.toString())}</span>
                     <span className="uppercase text-sm">
                       ({userPayments.reduce((sum, up) => sum + up.policies.length, 0)})
                     </span>
