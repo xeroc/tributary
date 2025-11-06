@@ -45,6 +45,7 @@ nav:
           - Integration: integration.md
           - Network Effect: networkeffect.md
   - Use Cases: use-cases.md
+  - FAQ: faq.md
   - Payment Providers: providers.md
   - Developer Guide:
       - Basics: how.md
