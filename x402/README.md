@@ -26,7 +26,7 @@ x402 is the **first real implementation of HTTP 402** - the proposed status code
 
 ## 🏗️ How It Works
 
-### The x402 Flow
+### The Deferred x402 Flow
 
 1. **Client requests premium content**
 
@@ -38,22 +38,30 @@ x402 is the **first real implementation of HTTP 402** - the proposed status code
 
    ```json
    {
-     "subscription": {
-       "recipient": "8EVBvLDVhJUw1nkAUp73mPyxviVFK9Wza5ba1GRANEw1",
-       "gateway": "ConTf7Qf3r1QoDDLcLTMVxLrzzvPTPrwzEYJrjqm1U7",
-       "tokenMint": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
-       "amount": 100,
-       "paymentFrequency": "monthly",
-       "autoRenew": true,
-       "cluster": "devnet"
-     }
+     "accepts": [
+       {
+         "scheme": "deferred",
+         "network": "solana-devnet",
+         "resource": "https://example.com/premium",
+         "id": "sub_1234567890_abc123def",
+         "termsUrl": "https://tributary.so/terms",
+         "amount": 100,
+         "currency": "USDC",
+         "recipient": "8EVBvLDVhJUw1nkAUp73mPyxviVFK9Wza5ba1GRANEw1",
+         "gateway": "ConTf7Qf3r1QoDDLcLTMVxLrzzvPTPrwzEYJrjqm1U7",
+         "tokenMint": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+         "paymentFrequency": "monthly",
+         "autoRenew": true
+       }
+     ]
    }
    ```
 
 3. **Client creates subscription transaction** using Tributary SDK
-4. **Client signs and sends back** via `X-Payment` header
-5. **Server verifies, submits, and confirms** on-chain
-6. **Premium content unlocked** - forever automated
+4. **Client signs and sends back** via `X-Payment` header with deferred scheme
+5. **Server verifies, submits, and confirms** on-chain immediately
+6. **Server returns JWT** as proof of deferred subscription
+7. **Client uses JWT** for future access to premium content
 
 ## 🛠️ Technical Architecture
 
@@ -132,7 +140,7 @@ cd x402 && tsx server.ts
 cd x402 && tsx client.ts
 ```
 
-Watch the magic happen - subscription created, verified, and premium content unlocked!
+Watch the magic happen - deferred subscription created, JWT returned, and premium content accessed via JWT!
 
 ## 📚 API Reference
 
@@ -140,27 +148,37 @@ Watch the magic happen - subscription created, verified, and premium content unl
 
 #### `GET /premium`
 
-Returns subscription quote or processes payment.
+Returns deferred subscription quote, processes payment, or verifies JWT.
 
-**Without X-Payment header:**
+**Without headers:**
 
 - Status: `402 Payment Required`
-- Body: Subscription quote with payment details
+- Body: Deferred scheme offer with subscription details
 
 **With X-Payment header:**
 
 - Status: `200 OK`
-- Body: Premium content + subscription confirmation
+- Body: JWT token + subscription confirmation
+- Headers: `Payment-Response` with deferred scheme details
+
+**With Authorization header (Bearer JWT):**
+
+- Status: `200 OK`
+- Body: Premium content (if JWT valid and subscription active)
 
 ### Client Functions
 
 #### `createSubscriptionInstruction()`
 
-Creates Solana instructions for subscription setup using Tributary SDK.
+Creates Solana instructions for deferred subscription setup using Tributary SDK.
 
 #### `verifySubscriptionCreation()`
 
 Verifies subscription policy was created correctly on-chain.
+
+#### JWT Verification
+
+Server validates JWT tokens and checks payment policy existence/validity on-chain.
 
 ## 🔗 Links & Resources
 

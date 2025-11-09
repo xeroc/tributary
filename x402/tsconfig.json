@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "types": ["mocha", "chai"],
+    "types": [],
     "typeRoots": ["./node_modules/@types"],
     "lib": ["ES2022"],
     "module": "commonjs",
     "target": "ES2022",
     "esModuleInterop": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "outDir": "./dist"
   }
 }

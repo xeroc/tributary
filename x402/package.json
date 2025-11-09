@@ -24,12 +24,14 @@
     "@types/express": "^5.0.5",
     "bn.js": "^5.2.2",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "node-fetch": "^3.3.2",
     "tsx": "^4.20.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",
     "@types/bn.js": "^5.2.0",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^24.5.2",
     "eslint": "^9.35.0",
     "eslint-plugin-react-hooks": "^5.2.0",

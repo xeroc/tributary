@@ -2,6 +2,7 @@
 import express from "express";
 import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import { Tributary, PaymentStatus } from "@tributary-so/sdk";
+import jwt from "jsonwebtoken";
 
 // Configuration from environment variables
 const RPC_URL = process.env.RPC_URL || "https://api.devnet.solana.com";
@@ -21,6 +22,9 @@ const AUTO_RENEW = process.env.AUTO_RENEW === "true";
 const MAX_RENEWALS = process.env.MAX_RENEWALS
   ? parseInt(process.env.MAX_RENEWALS)
   : null;
+
+// JWT configuration
+const JWT_SECRET = process.env.JWT_SECRET || "tributary-x402-secret";
 
 const connection = new Connection(RPC_URL, "confirmed");
 
@@ -133,6 +137,46 @@ app.use(express.json());
 
 // x402 endpoint - Quote or verify payment
 app.get("/premium", async (req, res) => {
+  const authHeader = req.header("Authorization");
+
+  // Check for JWT authorization
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    const token = authHeader.substring(7);
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET) as {
+        policyAddress: string;
+        subscriptionId: string;
+        amount: number;
+        recipient: string;
+        gateway: string;
+      };
+
+      // Verify policy exists and is valid
+      const policy = await sdk.getPaymentPolicy(
+        new PublicKey(decoded.policyAddress)
+      );
+      if (policy && Object.keys(policy.status)[0] === "active") {
+        return res.json({
+          data: "Premium content - Subscription verified!",
+          subscriptionDetails: {
+            policyAddress: decoded.policyAddress,
+            subscriptionId: decoded.subscriptionId,
+            amount: decoded.amount,
+            recipient: decoded.recipient,
+            gateway: decoded.gateway,
+          },
+        });
+      } else {
+        return res
+          .status(402)
+          .json({ error: "Invalid or inactive subscription" });
+      }
+    } catch (e) {
+      console.error("JWT verification error:", e);
+      return res.status(401).json({ error: "Invalid JWT token" });
+    }
+  }
+
   const xPaymentHeader = req.header("X-Payment");
 
   // If client provided X-Payment header, verify and submit transaction
@@ -145,13 +189,20 @@ app.get("/premium", async (req, res) => {
         x402Version: number;
         scheme: string;
         network: string;
+        id: string;
         payload: {
           serializedTransaction: string;
         };
       };
 
-      console.log("Received subscription transaction from client");
+      console.log("Received deferred subscription transaction from client");
       console.log(`  Network: ${paymentData.network}`);
+      console.log(`  Scheme: ${paymentData.scheme}`);
+      console.log(`  ID: ${paymentData.id}`);
+
+      if (paymentData.scheme !== "deferred") {
+        throw new Error("Only deferred scheme is supported");
+      }
 
       if (
         paymentData.network != "solana-devnet" &&
@@ -186,13 +237,37 @@ app.get("/premium", async (req, res) => {
       );
 
       if (preVerification.success) {
-        return res.json({
-          data: "Premium content - Subscription verified!",
-          subscriptionDetails: {
+        console.log("✓ Existing subscription found, returning JWT early");
+
+        // Create JWT for existing subscription
+        const token = jwt.sign(
+          {
             policyAddress: preVerification.policyAddress?.toBase58(),
+            subscriptionId: paymentData.id,
+            amount: SUBSCRIPTION_AMOUNT,
             recipient: RECIPIENT_WALLET,
             gateway: gatewayPda.toBase58(),
-            amount: SUBSCRIPTION_AMOUNT,
+            tokenMint: TOKEN_MINT,
+            paymentFrequency: PAYMENT_FREQUENCY,
+            autoRenew: AUTO_RENEW,
+          },
+          JWT_SECRET,
+          { expiresIn: "1y" }
+        );
+
+        res.set(
+          "Payment-Response",
+          `scheme="deferred", network="${paymentData.network}", id="${
+            paymentData.id
+          }", timestamp=${Date.now()}`
+        );
+        return res.json({
+          jwt: token,
+          message:
+            "Existing deferred subscription verified. Use JWT for future access.",
+          subscriptionDetails: {
+            policyAddress: preVerification.policyAddress?.toBase58(),
+            subscriptionId: paymentData.id,
           },
         });
       }
@@ -270,15 +345,37 @@ app.get("/premium", async (req, res) => {
         `View transaction: https://explorer.solana.com/tx/${signature}?cluster=devnet`
       );
 
-      // Subscription verified! Return premium content
+      // Create JWT with subscription details
+      const token = jwt.sign(
+        {
+          policyAddress: verification.policyAddress?.toBase58(),
+          subscriptionId: paymentData.id,
+          amount: SUBSCRIPTION_AMOUNT,
+          recipient: RECIPIENT_WALLET,
+          gateway: gatewayPda.toBase58(),
+          tokenMint: TOKEN_MINT,
+          paymentFrequency: PAYMENT_FREQUENCY,
+          autoRenew: AUTO_RENEW,
+        },
+        JWT_SECRET,
+        { expiresIn: "1y" }
+      );
+
+      // Return JWT as proof of deferred subscription
+      res.set(
+        "Payment-Response",
+        `scheme="deferred", network="${paymentData.network}", id="${
+          paymentData.id
+        }", timestamp=${Date.now()}`
+      );
       return res.json({
-        data: "Premium content - Subscription verified!",
+        jwt: token,
+        message:
+          "Deferred subscription created successfully. Use JWT for future access.",
         subscriptionDetails: {
           signature,
           policyAddress: verification.policyAddress?.toBase58(),
-          recipient: RECIPIENT_WALLET,
-          gateway: gatewayPda.toBase58(),
-          amount: SUBSCRIPTION_AMOUNT,
+          subscriptionId: paymentData.id,
           explorerUrl: `https://explorer.solana.com/tx/${signature}?cluster=devnet`,
         },
       });
@@ -291,21 +388,31 @@ app.get("/premium", async (req, res) => {
     }
   }
 
-  // No subscription provided - return 402 with subscription details
-  console.log("New subscription quote requested");
+  // No subscription provided - return 402 with deferred scheme offer
+  console.log("New deferred subscription quote requested");
+
+  const subscriptionId = `sub_${Date.now()}_${Math.random()
+    .toString(36)
+    .substr(2, 9)}`;
 
   return res.status(402).json({
-    subscription: {
-      recipient: RECIPIENT_WALLET,
-      gateway: gatewayPda.toBase58(),
-      tokenMint: TOKEN_MINT,
-      amount: SUBSCRIPTION_AMOUNT,
-      paymentFrequency: PAYMENT_FREQUENCY,
-      autoRenew: AUTO_RENEW,
-      maxRenewals: MAX_RENEWALS,
-      cluster: "devnet",
-      message: "Create subscription for premium access",
-    },
+    accepts: [
+      {
+        scheme: "deferred",
+        network: "solana-devnet",
+        resource: `${req.protocol}://${req.get("host")}${req.originalUrl}`,
+        id: subscriptionId,
+        termsUrl: "https://tributary.so/terms",
+        amount: SUBSCRIPTION_AMOUNT,
+        currency: "USDC",
+        recipient: RECIPIENT_WALLET,
+        gateway: gatewayPda.toBase58(),
+        tokenMint: TOKEN_MINT,
+        paymentFrequency: PAYMENT_FREQUENCY,
+        autoRenew: AUTO_RENEW,
+        maxRenewals: MAX_RENEWALS,
+      },
+    ],
   });
 });
 
