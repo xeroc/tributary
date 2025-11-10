@@ -62,7 +62,7 @@ export function AppHeader() {
             </button>
             <button
               onClick={() => handleNavClick('/x402')}
-              className={buttonClass}
+              className={`${buttonClass} bg-warning-300 text-black`}
               style={{ fontFamily: 'var(--font-secondary)' }}
             >
               x402
@@ -151,7 +151,7 @@ export function AppHeader() {
             </button>
             <button
               onClick={() => handleNavClick('/x402')}
-              className={`${buttonClass} w-full justify-start`}
+              className={`${buttonClass} bg-warning-300 text-black w-full justify-start`}
               style={{ fontFamily: 'var(--font-secondary)' }}
             >
               x402
