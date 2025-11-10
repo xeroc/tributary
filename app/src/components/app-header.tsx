@@ -60,6 +60,13 @@ export function AppHeader() {
             >
               Hackathon
             </button>
+            <button
+              onClick={() => handleNavClick('/x402')}
+              className={buttonClass}
+              style={{ fontFamily: 'var(--font-secondary)' }}
+            >
+              x402
+            </button>
             {/* <button */}
             {/*   onClick={() => handleNavClick('/about')} */}
             {/*   className={buttonClass} */}
@@ -141,6 +148,13 @@ export function AppHeader() {
               style={{ fontFamily: 'var(--font-secondary)' }}
             >
               Hackathon
+            </button>
+            <button
+              onClick={() => handleNavClick('/x402')}
+              className={`${buttonClass} w-full justify-start`}
+              style={{ fontFamily: 'var(--font-secondary)' }}
+            >
+              x402
             </button>
             {/* <button */}
             {/*   onClick={() => handleNavClick('/about')} */}

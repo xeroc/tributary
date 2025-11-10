@@ -7,6 +7,7 @@ const LazyDashboard = lazy(() => import('@/components/dashboard/dashboard-featur
 const LazyPaymentPolicy = lazy(() => import('@/components/payment-policy/payment-policy-feature'))
 const LazyAccount = lazy(() => import('@/components/account/account-page'))
 const LazyPresentation = lazy(() => import('@/components/presentation/presentation-feature'))
+const LazyX402Presentation = lazy(() => import('@/components/presentation/x402-presentation-feature'))
 
 const routes: RouteObject[] = [
   { index: true, element: <LazyDashboard /> },
@@ -16,6 +17,7 @@ const routes: RouteObject[] = [
   { path: 'quickstart', element: <LazyPaymentPolicy /> },
   { path: 'account', element: <LazyAccount /> },
   { path: 'hackathon', element: <LazyPresentation /> },
+  { path: 'x402', element: <LazyX402Presentation /> },
 ]
 
 export function App() {
