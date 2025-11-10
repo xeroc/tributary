@@ -1,20 +1,20 @@
 {
-  "name": "@tributary-so/x402",
+  "name": "@tributary-so/sdk-x402",
+  "version": "0.1.0",
   "scripts": {
     "build": "rm -rf dist && tsc -b",
     "ci": "npm run build && npm run lint && npm run format:check",
-    "dev": "npx tsx src/index.ts",
+    "server": "npx tsx src/server.ts",
+    "client": "npx tsx src/client.ts",
     "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "lint": "eslint ."
+    "format:check": "prettier --check ."
   },
-  "description": "x402 example implementation",
+  "description": "x402 integration for tributary subscriptions on solana",
   "keywords": [
     "solana-web3js",
     "typescript"
   ],
-  "version": "0.0.0",
-  "private": true,
+  "private": false,
   "type": "module",
   "dependencies": {
     "@coral-xyz/anchor": "^0.31.0",
@@ -41,5 +41,15 @@
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.44.0"
   },
-  "main": "./dist/sdk/src/index.js"
+  "engines": {
+    "node": ">=16"
+  },
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
+    }
+  }
 }

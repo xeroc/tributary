@@ -1,12 +1,24 @@
 {
   "compilerOptions": {
-    "types": [],
-    "typeRoots": ["./node_modules/@types"],
-    "lib": ["ES2022"],
-    "module": "commonjs",
-    "target": "ES2022",
+    "baseUrl": ".",
+    "strict": true,
     "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "checkJs": true,
+    "allowJs": true,
+    "declaration": true,
+    "declarationMap": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "lib": ["es2020"],
+    "target": "es2020",
+    "module": "es2020",
+    "moduleResolution": "bundler",
+    "types": ["node"],
+    "outDir": "./dist",
     "sourceMap": true,
-    "outDir": "./dist"
-  }
+    "typeRoots": ["./node_modules/@types"]
+  },
+  "exclude": ["node_modules", "tests"]
 }

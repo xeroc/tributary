@@ -44,7 +44,7 @@ async function run() {
       gateway: string;
       tokenMint: string;
       paymentFrequency: string;
-      paymentFrequencyCustomSeconds: number | null;
+      paymentFrequencyCustomSeconds: number | undefined;
       autoRenew: boolean;
       maxRenewals: number | null;
     }>;
