@@ -1,4 +1,6 @@
-use crate::{constants::*, state::*, utils::calculate_next_payment_due};
+use crate::{
+    constants::*, error::RecurringPaymentsError, state::*, utils::calculate_next_payment_due,
+};
 use anchor_lang::{prelude::*, solana_program::program_option::COption};
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
@@ -106,6 +108,12 @@ pub fn handler_execute_payment(ctx: Context<ExecutePayment>) -> Result<()> {
             ..
         } => (*amount, *next_payment_due, payment_frequency),
     };
+
+    // Validate delegated amount is sufficient
+    require!(
+        ctx.accounts.user_token_account.delegated_amount >= payment_amount,
+        RecurringPaymentsError::InsufficientDelegatedAmount
+    );
 
     // Validate payment timing
     require!(
