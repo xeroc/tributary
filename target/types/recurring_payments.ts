@@ -410,38 +410,7 @@ export type RecurringPayments = {
         },
         {
           "name": "paymentPolicy",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  112,
-                  97,
-                  121,
-                  109,
-                  101,
-                  110,
-                  116,
-                  95,
-                  112,
-                  111,
-                  108,
-                  105,
-                  99,
-                  121
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "userPayment"
-              },
-              {
-                "kind": "arg",
-                "path": "policyId"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "systemProgram",
@@ -449,10 +418,6 @@ export type RecurringPayments = {
         }
       ],
       "args": [
-        {
-          "name": "policyId",
-          "type": "u32"
-        },
         {
           "name": "policyType",
           "type": {
@@ -1804,7 +1769,10 @@ export type RecurringPayments = {
         "Each owner/authority+mint has a unique UserPayment account.",
         "The purpose of this account is to be able to identify quickly",
         "some statistics that are valid across *all* payment policies",
-        "for an authority across a mint."
+        "for an authority across a mint.",
+        "",
+        "IMPORTANT: All variants MUST be exactly 128 bytes to ensure consistent account sizing",
+        "and enable future enum variant additions without breaking existing accounts."
       ],
       "type": {
         "kind": "struct",

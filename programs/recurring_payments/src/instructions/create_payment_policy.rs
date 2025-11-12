@@ -2,7 +2,6 @@ use crate::{constants::*, error::RecurringPaymentsError, state::*};
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
-#[instruction(policy_id: u32)]
 pub struct CreatePaymentPolicy<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
@@ -41,7 +40,7 @@ pub struct CreatePaymentPolicy<'info> {
         seeds = [
             PAYMENT_POLICY_SEED,
             user_payment.key().as_ref(),
-            policy_id.to_le_bytes().as_ref()
+            (user_payment.active_policies_count+1).to_le_bytes().as_ref()
         ],
         bump
     )]
@@ -52,7 +51,6 @@ pub struct CreatePaymentPolicy<'info> {
 
 pub fn handler_create_payment_policy(
     ctx: Context<CreatePaymentPolicy>,
-    policy_id: u32,
     policy_type: PolicyType,
     memo: [u8; 64],
 ) -> Result<()> {
@@ -74,14 +72,9 @@ pub fn handler_create_payment_policy(
         }
     }
 
-    // Enforce maximum policies per user limit
-    require!(
-        ctx.accounts.user_payment.active_policies_count < ctx.accounts.config.max_policies_per_user,
-        RecurringPaymentsError::MaxPoliciesReached
-    );
-
     let payment_policy = &mut ctx.accounts.payment_policy;
     let user_payment = &mut ctx.accounts.user_payment;
+    let policy_id = user_payment.active_policies_count + 1;
 
     payment_policy.user_payment = user_payment.key();
     payment_policy.recipient = ctx.accounts.recipient.key();
@@ -96,14 +89,6 @@ pub fn handler_create_payment_policy(
     payment_policy.policy_id = policy_id;
     payment_policy.bump = ctx.bumps.payment_policy;
 
-    // Update user payment account
-    require!(
-        user_payment.active_policies_count < u32::MAX,
-        RecurringPaymentsError::MaxPoliciesReached
-    );
-    user_payment.active_policies_count = user_payment.active_policies_count.saturating_add(1);
-    user_payment.updated_at = clock.unix_timestamp;
-
     emit!(PaymentPolicyCreated {
         user_payment: payment_policy.user_payment,
         recipient: payment_policy.recipient,
@@ -113,18 +98,20 @@ pub fn handler_create_payment_policy(
         memo: payment_policy.memo,
     });
 
-    // Get next_payment_due from adjusted policy
-    let next_payment_due = match &payment_policy.policy_type {
-        PolicyType::Subscription {
-            next_payment_due, ..
-        } => *next_payment_due,
-    };
+    // Update user payment account
+    // Enforce maximum policies per user limit
+    require!(
+        user_payment.active_policies_count < u32::MAX
+            && user_payment.active_policies_count < ctx.accounts.config.max_policies_per_user,
+        RecurringPaymentsError::MaxPoliciesReached
+    );
+    user_payment.active_policies_count = user_payment.active_policies_count.saturating_add(1);
+    user_payment.updated_at = clock.unix_timestamp;
 
     msg!(
-        "Payment policy created with ID: {}, recipient: {:?}, next payment due: {}",
+        "Payment policy created with ID: {}, recipient: {:?}",
         policy_id,
         payment_policy.recipient,
-        next_payment_due
     );
 
     Ok(())

@@ -43,16 +43,10 @@ pub mod recurring_payments {
 
     pub fn create_payment_policy(
         ctx: Context<CreatePaymentPolicy>,
-        policy_id: u32,
         policy_type: PolicyType,
         memo: [u8; 64],
     ) -> Result<()> {
-        instructions::create_payment_policy::handler_create_payment_policy(
-            ctx,
-            policy_id,
-            policy_type,
-            memo,
-        )
+        instructions::create_payment_policy::handler_create_payment_policy(ctx, policy_type, memo)
     }
 
     pub fn execute_payment(ctx: Context<ExecutePayment>) -> Result<()> {

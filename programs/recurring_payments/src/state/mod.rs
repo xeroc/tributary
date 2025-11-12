@@ -118,6 +118,9 @@ impl PaymentFrequency {
 /// The purpose of this account is to be able to identify quickly
 /// some statistics that are valid across *all* payment policies
 /// for an authority across a mint.
+///
+/// IMPORTANT: All variants MUST be exactly 128 bytes to ensure consistent account sizing
+/// and enable future enum variant additions without breaking existing accounts.
 #[account]
 pub struct UserPayment {
     pub owner: Pubkey,
@@ -141,7 +144,7 @@ impl UserPayment {
         8 + // updated_at: i64
         1 + // is_active: bool
         1 + // bump: u8
-        256; // padding: [u8; 256]
+        256; // padding: [u8; 252]
 }
 
 /// A gateway operator runs the service that triggers payment.

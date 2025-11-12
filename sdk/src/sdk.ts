@@ -174,7 +174,7 @@ export class Tributary {
       systemProgram: SystemProgram.programId,
     };
     return await this.program.methods
-      .createPaymentPolicy(policyId, policyType, memo)
+      .createPaymentPolicy(policyType, memo)
       .accountsStrict(accounts)
       .instruction();
   }
@@ -256,7 +256,7 @@ export class Tributary {
     };
 
     const createPaymentPolicyIx = await this.program.methods
-      .createPaymentPolicy(policyId, policyType, memo)
+      .createPaymentPolicy(policyType, memo)
       .accountsStrict(accounts)
       .instruction();
 

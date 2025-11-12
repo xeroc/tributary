@@ -404,38 +404,7 @@
         },
         {
           "name": "payment_policy",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  112,
-                  97,
-                  121,
-                  109,
-                  101,
-                  110,
-                  116,
-                  95,
-                  112,
-                  111,
-                  108,
-                  105,
-                  99,
-                  121
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "user_payment"
-              },
-              {
-                "kind": "arg",
-                "path": "policy_id"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "system_program",
@@ -443,10 +412,6 @@
         }
       ],
       "args": [
-        {
-          "name": "policy_id",
-          "type": "u32"
-        },
         {
           "name": "policy_type",
           "type": {
@@ -1798,7 +1763,10 @@
         "Each owner/authority+mint has a unique UserPayment account.",
         "The purpose of this account is to be able to identify quickly",
         "some statistics that are valid across *all* payment policies",
-        "for an authority across a mint."
+        "for an authority across a mint.",
+        "",
+        "IMPORTANT: All variants MUST be exactly 128 bytes to ensure consistent account sizing",
+        "and enable future enum variant additions without breaking existing accounts."
       ],
       "type": {
         "kind": "struct",
