@@ -415,7 +415,10 @@ export type RecurringPayments = {
           }
         },
         {
-          "name": "recipient"
+          "name": "recipient",
+          "docs": [
+            "corresponding tokenAccount/ata will be derived during execution."
+          ]
         },
         {
           "name": "tokenMint"

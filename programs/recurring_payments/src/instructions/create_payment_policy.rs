@@ -1,5 +1,6 @@
 use crate::{constants::*, error::RecurringPaymentsError, state::*};
 use anchor_lang::prelude::*;
+use anchor_spl::token::Mint;
 
 #[derive(Accounts)]
 pub struct CreatePaymentPolicy<'info> {
@@ -12,20 +13,20 @@ pub struct CreatePaymentPolicy<'info> {
         bump = user_payment.bump,
         constraint = user_payment.owner == user.key(),
     )]
-    pub user_payment: Account<'info, UserPayment>,
+    pub user_payment: Box<Account<'info, UserPayment>>,
 
-    /// CHECK: This is the recipient account that will receive payments
+    /// CHECK: This is the recipient account that will receive payments. It is an authority, the
+    /// corresponding tokenAccount/ata will be derived during execution.
     pub recipient: UncheckedAccount<'info>,
 
-    /// CHECK: This is the token mint for the payment
-    pub token_mint: UncheckedAccount<'info>,
+    pub token_mint: Account<'info, Mint>,
 
     #[account(
         seeds = [GATEWAY_SEED, gateway.authority.as_ref()],
         bump = gateway.bump,
         constraint = gateway.is_active,
     )]
-    pub gateway: Account<'info, PaymentGateway>,
+    pub gateway: Box<Account<'info, PaymentGateway>>,
 
     #[account(
         seeds = [CONFIG_SEED],
