@@ -1232,6 +1232,11 @@
       "code": 6014,
       "name": "InvalidPaymentDueDate",
       "msg": "Invalid payment due date"
+    },
+    {
+      "code": 6015,
+      "name": "ArithmeticOverflow",
+      "msg": "Arithmetic overflow"
     }
   ],
   "types": [

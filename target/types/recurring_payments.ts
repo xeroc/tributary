@@ -1238,6 +1238,11 @@ export type RecurringPayments = {
       "code": 6014,
       "name": "invalidPaymentDueDate",
       "msg": "Invalid payment due date"
+    },
+    {
+      "code": 6015,
+      "name": "arithmeticOverflow",
+      "msg": "Arithmetic overflow"
     }
   ],
   "types": [

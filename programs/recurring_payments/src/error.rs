@@ -32,4 +32,6 @@ pub enum RecurringPaymentsError {
     InvalidFeeBps,
     #[msg("Invalid payment due date")]
     InvalidPaymentDueDate,
+    #[msg("Arithmetic overflow")]
+    ArithmeticOverflow,
 }
