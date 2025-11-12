@@ -144,7 +144,7 @@ impl UserPayment {
         8 + // updated_at: i64
         1 + // is_active: bool
         1 + // bump: u8
-        256; // padding: [u8; 252]
+        256; // padding: [u8; 256]
 }
 
 /// A gateway operator runs the service that triggers payment.
