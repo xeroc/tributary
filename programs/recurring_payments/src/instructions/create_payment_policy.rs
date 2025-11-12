@@ -71,7 +71,11 @@ pub fn handler_create_payment_policy(
     payment_policy.bump = ctx.bumps.payment_policy;
 
     // Update user payment account
-    user_payment.active_policies_count = user_payment.active_policies_count.checked_add(1).unwrap();
+    require!(
+        user_payment.active_policies_count < u32::MAX,
+        crate::error::RecurringPaymentsError::MaxPoliciesReached
+    );
+    user_payment.active_policies_count = user_payment.active_policies_count.saturating_add(1);
     user_payment.updated_at = clock.unix_timestamp;
 
     emit!(PaymentPolicyCreated {
