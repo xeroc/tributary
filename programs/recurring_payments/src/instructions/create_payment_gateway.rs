@@ -1,4 +1,4 @@
-use crate::{constants::*, state::*};
+use crate::{constants::*, error::RecurringPaymentsError, state::*};
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
@@ -37,6 +37,12 @@ pub fn handler_create_payment_gateway(
     name: [u8; 32],
     url: [u8; 64],
 ) -> Result<()> {
+    // Validate fee basis points
+    require!(
+        gateway_fee_bps <= 10000,
+        RecurringPaymentsError::InvalidFeeBps
+    );
+
     let gateway = &mut ctx.accounts.gateway;
     let clock = Clock::get()?;
 

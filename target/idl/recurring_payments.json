@@ -1182,6 +1182,11 @@
       "code": 6012,
       "name": "InvalidInterval",
       "msg": "Invalid Interval"
+    },
+    {
+      "code": 6013,
+      "name": "InvalidFeeBps",
+      "msg": "Invalid fee basis points"
     }
   ],
   "types": [

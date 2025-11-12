@@ -28,4 +28,6 @@ pub enum RecurringPaymentsError {
     PolicyPaused,
     #[msg("Invalid Interval")]
     InvalidInterval,
+    #[msg("Invalid fee basis points")]
+    InvalidFeeBps,
 }
