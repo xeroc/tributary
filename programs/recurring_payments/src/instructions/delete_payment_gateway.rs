@@ -1,4 +1,4 @@
-use crate::{constants::*, state::*};
+use crate::{constants::*, error::RecurringPaymentsError, state::*};
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
@@ -20,7 +20,8 @@ pub struct DeletePaymentGateway<'info> {
     #[account(
         seeds = [CONFIG_SEED],
         bump = config.bump,
-        constraint = config.admin == admin.key()
+        constraint = config.admin == admin.key(),
+        constraint = !config.emergency_pause @ RecurringPaymentsError::ProgramPaused
     )]
     pub config: Account<'info, ProgramConfig>,
 }

@@ -21,7 +21,8 @@ pub struct CreatePaymentGateway<'info> {
     #[account(
         seeds = [CONFIG_SEED],
         bump = config.bump,
-        constraint = config.admin == admin.key()
+        constraint = config.admin == admin.key(),
+        constraint = !config.emergency_pause @ RecurringPaymentsError::ProgramPaused
     )]
     pub config: Account<'info, ProgramConfig>,
 

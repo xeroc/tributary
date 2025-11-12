@@ -1,4 +1,4 @@
-use crate::{constants::*, state::*};
+use crate::{constants::*, error::RecurringPaymentsError, state::*};
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
@@ -27,6 +27,13 @@ pub struct ChangePaymentPolicyStatus<'info> {
         bump = payment_policy.bump,
     )]
     pub payment_policy: Account<'info, PaymentPolicy>,
+
+    #[account(
+        seeds = [CONFIG_SEED],
+        bump = config.bump,
+        constraint = !config.emergency_pause @ RecurringPaymentsError::ProgramPaused,
+    )]
+    pub config: Account<'info, ProgramConfig>,
 }
 
 pub fn handler_change_payment_policy_status(

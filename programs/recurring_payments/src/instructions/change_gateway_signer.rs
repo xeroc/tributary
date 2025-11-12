@@ -1,4 +1,4 @@
-use crate::{constants::*, state::*};
+use crate::{constants::*, error::RecurringPaymentsError, state::*};
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
@@ -16,6 +16,13 @@ pub struct ChangeGatewaySigner<'info> {
 
     /// CHECK: The new signer that will be authorized to execute payments
     pub new_signer: UncheckedAccount<'info>,
+
+    #[account(
+        seeds = [CONFIG_SEED],
+        bump = config.bump,
+        constraint = !config.emergency_pause @ RecurringPaymentsError::ProgramPaused,
+    )]
+    pub config: Account<'info, ProgramConfig>,
 }
 
 pub fn handler_change_gateway_signer(ctx: Context<ChangeGatewaySigner>) -> Result<()> {

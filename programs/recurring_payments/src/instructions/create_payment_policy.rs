@@ -30,6 +30,7 @@ pub struct CreatePaymentPolicy<'info> {
     #[account(
         seeds = [CONFIG_SEED],
         bump = config.bump,
+        constraint = !config.emergency_pause @ RecurringPaymentsError::ProgramPaused,
     )]
     pub config: Box<Account<'info, ProgramConfig>>,
 

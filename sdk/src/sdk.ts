@@ -505,9 +505,11 @@ export class Tributary {
       userPaymentPda,
       policyId
     );
+    const { address: configPda } = getConfigPda(this.programId);
 
     const accounts = {
       owner: owner,
+      config: configPda,
       userPayment: userPaymentPda,
       tokenMint: tokenMint,
       paymentPolicy: paymentPolicyPda,
@@ -532,9 +534,11 @@ export class Tributary {
       userPaymentPda,
       policyId
     );
+    const { address: configPda } = getConfigPda(this.programId);
 
     const accounts = {
       owner: owner,
+      config: configPda,
       userPayment: userPaymentPda,
       tokenMint: tokenMint,
       paymentPolicy: paymentPolicyPda,
@@ -572,9 +576,11 @@ export class Tributary {
   ): Promise<TransactionInstruction> {
     const authority = this.provider.publicKey;
     const { address: gatewayPda } = this.getGatewayPda(gatewayAuthority);
+    const { address: configPda } = getConfigPda(this.programId);
 
     const accounts = {
       authority: authority,
+      config: configPda,
       gateway: gatewayPda,
       newSigner: newSigner,
     };
@@ -591,9 +597,11 @@ export class Tributary {
   ): Promise<TransactionInstruction> {
     const authority = this.provider.publicKey;
     const { address: gatewayPda } = this.getGatewayPda(gatewayAuthority);
+    const { address: configPda } = getConfigPda(this.programId);
 
     const accounts = {
       authority: authority,
+      config: configPda,
       gateway: gatewayPda,
       newFeeRecipient: newFeeRecipient,
     };

@@ -1,4 +1,4 @@
-use crate::{constants::*, state::*};
+use crate::{constants::*, error::RecurringPaymentsError, state::*};
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
@@ -16,6 +16,13 @@ pub struct ChangeGatewayFeeRecipient<'info> {
 
     /// CHECK: The new fee recipient that will receive gateway fees
     pub new_fee_recipient: UncheckedAccount<'info>,
+
+    #[account(
+        seeds = [CONFIG_SEED],
+        bump = config.bump,
+        constraint = !config.emergency_pause @ RecurringPaymentsError::ProgramPaused,
+    )]
+    pub config: Account<'info, ProgramConfig>,
 }
 
 pub fn handler_change_gateway_fee_recipient(ctx: Context<ChangeGatewayFeeRecipient>) -> Result<()> {
