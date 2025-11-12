@@ -59,6 +59,21 @@ pub fn handler_create_payment_policy(
     // Validate the policy type and its parameters
     policy_type.validate()?;
 
+    let clock = Clock::get()?;
+
+    // Adjust next payment due date if in the past
+    let mut adjusted_policy_type = policy_type.clone();
+    match &mut adjusted_policy_type {
+        PolicyType::Subscription {
+            next_payment_due, ..
+        } => {
+            if *next_payment_due <= clock.unix_timestamp {
+                msg!("Next payment due date was in the past, adjusting to current timestamp for immediate execution");
+                *next_payment_due = clock.unix_timestamp;
+            }
+        }
+    }
+
     // Enforce maximum policies per user limit
     require!(
         ctx.accounts.user_payment.active_policies_count < ctx.accounts.config.max_policies_per_user,
@@ -67,12 +82,11 @@ pub fn handler_create_payment_policy(
 
     let payment_policy = &mut ctx.accounts.payment_policy;
     let user_payment = &mut ctx.accounts.user_payment;
-    let clock = Clock::get()?;
 
     payment_policy.user_payment = user_payment.key();
     payment_policy.recipient = ctx.accounts.recipient.key();
     payment_policy.gateway = ctx.accounts.gateway.key();
-    payment_policy.policy_type = policy_type.clone();
+    payment_policy.policy_type = adjusted_policy_type;
     payment_policy.status = PaymentStatus::Active;
     payment_policy.memo = memo;
     payment_policy.total_paid = 0;
@@ -99,8 +113,8 @@ pub fn handler_create_payment_policy(
         memo: payment_policy.memo,
     });
 
-    // Get next_payment_due from policy_type
-    let next_payment_due = match &policy_type {
+    // Get next_payment_due from adjusted policy
+    let next_payment_due = match &payment_policy.policy_type {
         PolicyType::Subscription {
             next_payment_due, ..
         } => *next_payment_due,

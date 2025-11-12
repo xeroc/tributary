@@ -1193,6 +1193,11 @@ export type RecurringPayments = {
       "code": 6013,
       "name": "invalidFeeBps",
       "msg": "Invalid fee basis points"
+    },
+    {
+      "code": 6014,
+      "name": "invalidPaymentDueDate",
+      "msg": "Invalid payment due date"
     }
   ],
   "types": [

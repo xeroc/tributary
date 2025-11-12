@@ -30,4 +30,6 @@ pub enum RecurringPaymentsError {
     InvalidInterval,
     #[msg("Invalid fee basis points")]
     InvalidFeeBps,
+    #[msg("Invalid payment due date")]
+    InvalidPaymentDueDate,
 }

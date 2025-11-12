@@ -1187,6 +1187,11 @@
       "code": 6013,
       "name": "InvalidFeeBps",
       "msg": "Invalid fee basis points"
+    },
+    {
+      "code": 6014,
+      "name": "InvalidPaymentDueDate",
+      "msg": "Invalid payment due date"
     }
   ],
   "types": [
