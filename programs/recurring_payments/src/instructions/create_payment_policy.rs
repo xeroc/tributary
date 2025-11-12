@@ -1,4 +1,4 @@
-use crate::{constants::*, state::*};
+use crate::{constants::*, error::RecurringPaymentsError, state::*};
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
@@ -29,6 +29,12 @@ pub struct CreatePaymentPolicy<'info> {
     pub gateway: Account<'info, PaymentGateway>,
 
     #[account(
+        seeds = [CONFIG_SEED],
+        bump = config.bump,
+    )]
+    pub config: Box<Account<'info, ProgramConfig>>,
+
+    #[account(
         init,
         payer = user,
         space = PaymentPolicy::SIZE,
@@ -53,6 +59,12 @@ pub fn handler_create_payment_policy(
     // Validate the policy type and its parameters
     policy_type.validate()?;
 
+    // Enforce maximum policies per user limit
+    require!(
+        ctx.accounts.user_payment.active_policies_count < ctx.accounts.config.max_policies_per_user,
+        RecurringPaymentsError::MaxPoliciesReached
+    );
+
     let payment_policy = &mut ctx.accounts.payment_policy;
     let user_payment = &mut ctx.accounts.user_payment;
     let clock = Clock::get()?;
@@ -73,7 +85,7 @@ pub fn handler_create_payment_policy(
     // Update user payment account
     require!(
         user_payment.active_policies_count < u32::MAX,
-        crate::error::RecurringPaymentsError::MaxPoliciesReached
+        RecurringPaymentsError::MaxPoliciesReached
     );
     user_payment.active_policies_count = user_payment.active_policies_count.saturating_add(1);
     user_payment.updated_at = clock.unix_timestamp;

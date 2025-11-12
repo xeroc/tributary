@@ -143,6 +143,7 @@ export class Tributary {
     startTime?: BN | null
   ): Promise<TransactionInstruction> {
     const user = this.provider.publicKey;
+    const { address: configPda } = getConfigPda(this.programId);
     const { address: userPaymentPda } = this.getUserPaymentPda(user, tokenMint);
     const userPayment: UserPayment | null =
       await this.program.account.userPayment.fetchNullable(userPaymentPda);
@@ -168,6 +169,7 @@ export class Tributary {
       recipient: recipient,
       tokenMint: tokenMint,
       gateway: gateway,
+      config: configPda,
       paymentPolicy: paymentPolicy.address,
       systemProgram: SystemProgram.programId,
     };
@@ -241,8 +243,10 @@ export class Tributary {
 
     // Create payment policy instruction
     const paymentPolicyPda = this.getPaymentPolicyPda(userPaymentPda, policyId);
+    const { address: configPda } = getConfigPda(this.programId);
     const accounts = {
       user: user,
+      config: configPda,
       userPayment: userPaymentPda,
       recipient: recipient,
       tokenMint: tokenMint,
