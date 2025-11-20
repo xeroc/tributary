@@ -19,6 +19,27 @@ on:
 
 jobs:
   test:
-    uses: solana-developers/github-workflows/.github/workflows/test.yaml@v0.2.9
-    with:
-      program: ${{ 'recurring_payments' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+          cache-dependency-path: ./pnpm-lock.yaml
+
+      - uses: solana-developers/github-workflows/.github/workflows/test.yaml@v0.2.9
+        with:
+          program: ${{ 'recurring_payments' }}
