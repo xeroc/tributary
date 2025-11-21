@@ -1,0 +1,4 @@
+User-agent: *
+Disallow:
+
+Sitemap: https://tributary.so/sitemap.xml
