@@ -46,3 +46,12 @@ mainnet_deploy:
 
 publish_idl:
 	anchor idl upgrade -f target/idl/recurring_payments.json --provider.cluster mainnet --provider.wallet $(DEPLOY_KEY_PATH) $(PROGRAM_ID)
+
+submit-verifable-build:
+	yes | solana-verify verify-from-repo --remote \
+	--url  $(SOLANA_API) \
+	--program-id $(PROGRAM_ID) \
+	https://github.com/tributary-so/tributary \
+	--library-name recurring_payments \
+	--commit-hash $(shell git show-ref -s HEAD) \
+	--keypair $(DEPLOY_KEY_PATH)
