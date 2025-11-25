@@ -1155,6 +1155,7 @@ dependencies = [
  "anchor-spl",
  "proc-macro2",
  "quote",
+ "solana-security-txt",
  "syn 1.0.109",
 ]
 

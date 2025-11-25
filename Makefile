@@ -8,14 +8,13 @@ SOL_ARGS:=--with-compute-unit-price 1000 \
 		  --ws $(SOLANA_WS) \
 		  --max-sign-attempts 1000
 prep:
-	solana-install init 1.18.20
 	avm use 0.31.0
 
 # Devnet ######################################
 devnet_expand:
 	solana program extend $(PROGRAM_ID) 20480
 
-devnet_build: prep
+devnet_build:
 	anchor build
 
 devnet_deploy:
@@ -31,7 +30,7 @@ devnet_deploy_buffer:
 mainnet_expand:
 	solana program extend -k $(DEPLOY_KEY_PATH) $(PROGRAM_ID) 20480
 
-mainnet_build: prep
+mainnet_build:
 	anchor build --provider.wallet ${DEPLOY_KEY_PATH} --provider.cluster mainnet -p recurring_payments # -- --features mainnet
 
 mainnet_deploy_buffer:

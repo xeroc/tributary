@@ -8,6 +8,8 @@ pub mod state;
 pub mod utils;
 
 use anchor_lang::prelude::*;
+#[cfg(not(feature = "no-entrypoint"))]
+use solana_security_txt::security_txt;
 
 pub use constants::*;
 pub use instructions::*;
@@ -78,4 +80,20 @@ pub mod recurring_payments {
     pub fn change_gateway_fee_recipient(ctx: Context<ChangeGatewayFeeRecipient>) -> Result<()> {
         instructions::change_gateway_fee_recipient::handler_change_gateway_fee_recipient(ctx)
     }
+}
+
+#[cfg(not(feature = "no-entrypoint"))]
+security_txt! {
+    name: "Tributary.so",
+    project_url: "https://tributary.so",
+    contacts: "email:security@tributary.so,link:https://github.com/tributary-so/tributary/issues",
+    policy: "https://github.com/tributary-so/tributary/blob/master/SECURITY.md",
+
+    // Optional Fields
+    preferred_languages: "en,de",
+    source_code: "https://github.com/tributary-so/tributary",
+    // source_revision: default_env!("GITHUB_SHA", ""),
+    // source_release: default_env!("GITHUB_REF_NAME", ""),
+    auditors: "None",
+    acknowledgements: "Big shoutout to @rektoff for their Security Bootcamp!"
 }

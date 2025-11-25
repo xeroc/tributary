@@ -46,3 +46,80 @@
 ### Test Structure
 
 Tests in `tests/recurring_payments.test.ts` cover: program initialization, user payment creation, gateway setup, policy creation, delegate approval, and payment execution with fee distribution verification.
+
+## Program Details
+
+**Program ID:** `TRibg8W8zmPHQqWtyAD1rEBRXEdyU13Mu6qX1Sg42tJ`
+
+## Critical Gotchas
+
+### 1. Delegate Approval Required
+
+User must approve token delegation before payments can execute. `execute_payment` fails if delegate permissions are missing or insufficient.
+
+### 2. Payment Execution Timing
+
+`execute_payment` checks `next_payment_due` timestamp. Payments only execute if current time >= due time. Early calls are ignored.
+
+### 3. Fee Distribution
+
+- Protocol fee: 100 bps (1%) deducted from each payment
+- Gateway fee: Configurable bps (up to 10,000) split between gateway and protocol
+- Math: `(amount * bps) / 10000` rounds down; dust goes to protocol
+
+### 4. Account Size Padding
+
+All state accounts use fixed sizes with padding (e.g., PolicyType variants are 128 bytes). Changing padding breaks deserialization.
+
+### 5. Authority Changes
+
+Gateway authority changes require signer verification. Fee recipient and signer can be updated separately.
+
+### 6. Emergency Pause
+
+ProgramConfig has `emergency_pause` flag. When true, all `execute_payment` calls fail.
+
+## Architecture
+
+```
+User → Create UserPayment (owner/mint)
+    → Create PaymentGateway (authority/signer)
+    → Create PaymentPolicy (user_payment/recipient/gateway)
+    → Approve Delegate (token account delegation)
+    → Execute Payment (permissionless, by gateway signer)
+       → Transfer to recipient + fees
+```
+
+**PDAs:**
+
+- ProgramConfig: `["program_config"]` - singleton, manages protocol fees/admin
+- PaymentGateway: `["payment_gateway", authority]` - gateway settings/fees
+- UserPayment: `["user_payment", owner, mint]` - user stats across policies
+- PaymentPolicy: `["payment_policy", user_payment, policy_id]` - individual subscription
+- PaymentsDelegate: `["payments_delegate", user_payment, recipient, gateway]` - delegate authority
+
+## SDK
+
+TypeScript SDK in `sdk/` with dual compatibility:
+
+```typescript
+import { Tributary } from "@tributary-so/sdk"; // Main SDK class
+```
+
+Includes manager CLI in `sdk/manager.ts` for all program operations and PDA utilities.
+
+## Verified Deployment
+
+**Critical:** Use verifiable builds for on-chain verification.
+
+[Read more about deployments.](./DEPLOYMENT.md)
+
+## Testing
+
+| Layer       | Location | Framework     | Command       |
+| ----------- | -------- | ------------- | ------------- |
+| Integration | `tests/` | Jest + Anchor | `anchor test` |
+
+```bash
+anchor test
+```
