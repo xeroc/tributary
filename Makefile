@@ -1,7 +1,7 @@
 DEPLOY_KEY_PATH := ~/.config/solana/ADmSd9uYBRbLGa9rN1NtFv5LXtwLPdtVwGT5xhAYY4xZ.json
 PROGRAM_ID_PATH := ~/.config/solana/TRibg8W8zmPHQqWtyAD1rEBRXEdyU13Mu6qX1Sg42tJ.json
 PROGRAM_ID := TRibg8W8zmPHQqWtyAD1rEBRXEdyU13Mu6qX1Sg42tJ
-SOLANA_API := $(or $(SOLANA_API),wss://api.mainnet-beta.solana.com)
+SOLANA_API := $(or $(SOLANA_API),https://api.mainnet-beta.solana.com)
 SOLANA_WS := $(subst https://,wss://,$(SOLANA_API))
 SOL_ARGS:=--with-compute-unit-price 1000 \
 		  --keypair $(DEPLOY_KEY_PATH) \
@@ -53,5 +53,5 @@ submit-verifable-build:
 	--program-id $(PROGRAM_ID) \
 	https://github.com/tributary-so/tributary \
 	--library-name recurring_payments \
-	--commit-hash $(shell git show-ref -s HEAD) \
+	--commit-hash $(shell git show-ref -s origin/main) \
 	--keypair $(DEPLOY_KEY_PATH)
