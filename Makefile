@@ -55,3 +55,9 @@ submit-verifable-build:
 	--library-name recurring_payments \
 	--commit-hash $(shell git show-ref -s origin/main) \
 	--keypair $(DEPLOY_KEY_PATH)
+
+verifiable_build:
+	solana-verify build
+	solana-verify get-executable-hash ./target/deploy/recurring_payments.so
+	make mainnet_deploy
+	solana-verify get-program-hash -u $(SOLANA_API) $(PROGRAM_ID)
