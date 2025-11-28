@@ -1,0 +1,5 @@
+{
+  "entryPoints": ["src"],
+  "out": "docs",
+  "exclude": ["**/dist/**", "**/*.test.ts", "**/*.spec.ts"]
+}

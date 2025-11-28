@@ -52,6 +52,12 @@ export function getPaymentPolicyPda(
   return { address, bump };
 }
 
+/**
+ * Derives the Payments Delegate PDA.
+ * This PDA acts as the delegate authority for token accounts, allowing the program to pull funds for recurring payments.
+ * @param programId The PublicKey of the Tributary program.
+ * @returns An object containing the address and bump seed for the Payments Delegate PDA.
+ */
 export function getPaymentsDelegatePda(programId: PublicKey): PdaResult {
   const [address, bump] = PublicKey.findProgramAddressSync(
     [Buffer.from(SEEDS.PAYMENTS)],

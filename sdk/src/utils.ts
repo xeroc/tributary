@@ -1,6 +1,12 @@
 import BN from "bn.js";
 import { PaymentFrequency, PaymentFrequencyString } from "./types";
 
+/**
+ * Encodes a string memo into a fixed-size number array (Uint8Array).
+ * @param memo The string memo to encode.
+ * @param size The desired size of the output array. Defaults to 64.
+ * @returns A number array representing the encoded memo.
+ */
 export function encodeMemo(memo: string, size: number = 64): number[] {
   const buffer = new Uint8Array(size).fill(0);
   const encoder = new TextEncoder();

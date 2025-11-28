@@ -487,6 +487,10 @@ export class Tributary {
     return getPaymentPolicyPda(userPayment, policyId, this.programId);
   }
 
+  /**
+   * Helper method to get the Payments Delegate PDA.
+   * @returns The PdaResult for the Payments Delegate PDA.
+   */
   getPaymentsDelegatePda() {
     return getPaymentsDelegatePda(this.programId);
   }

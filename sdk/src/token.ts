@@ -19,6 +19,9 @@ export interface Collection {
 }
 
 // Simplified metadata structure for easier consumption
+/**
+ * Simplified metadata structure for easier consumption.
+ */
 export interface Metadata {
   mint: PublicKey;
   data: {
