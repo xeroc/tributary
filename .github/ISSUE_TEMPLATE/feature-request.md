@@ -1,0 +1,49 @@
+name: Feature Request
+description: Suggest a new feature or enhancement
+title: "[Feature]: "
+labels: ["enhancement"]
+assignees: []
+body:
+
+- type: markdown
+  attributes:
+  value: |
+  Thanks for suggesting a new feature! This helps us prioritize improvements.
+- type: input
+  id: contact
+  attributes:
+  label: Contact Details
+  description: How can we get in touch with you if we need more info?
+  placeholder: ex. <email@example.com> or @username on Discord/Twitter
+  validations:
+  required: false
+- type: textarea
+  id: description
+  attributes:
+  label: Feature Description
+  description: Describe the feature you'd like to see.
+  placeholder: What should this feature do?
+  validations:
+  required: true
+- type: dropdown
+  id: component
+  attributes:
+  label: Component
+  description: Which component does this feature affect?
+  options:
+  - contract
+  - sdk
+  - documentation
+  - app
+  - landingpage
+  - other
+    validations:
+    required: true
+- type: textarea
+  id: additional-context
+  attributes:
+  label: Additional Context
+  description: Add any other context or details.
+  placeholder: Links, screenshots, etc.
+  validations:
+  required: false
