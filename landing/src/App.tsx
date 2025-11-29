@@ -715,6 +715,37 @@ import { BN } from '@coral-xyz/anchor'
                 wallet interface or a dApp built on Tributary.
               </p>
             </details>
+
+            {/* FAQ Item 5 */}
+            <details className="group bg-neutral-50 p-6 rounded-lg border border-neutral-200 cursor-pointer">
+              <summary className="flex justify-between items-center font-semibold text-lg text-neutral-800">
+                How does Tributary's security compare to other protocols?
+                <span className="group-open:rotate-180 transition-transform">
+                  <svg
+                    className="w-5 h-5 text-neutral-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M19 9l-7 7-7-7"
+                    ></path>
+                  </svg>
+                </span>
+              </summary>
+              <p className="mt-4 text-neutral-600">
+                Unlike protocols like x402 where private keys must be accessible
+                to AI agents or bots—granting access to your entire wallet and
+                all assets—Tributary limits delegation to a specific token
+                (e.g., USDC) and a predefined amount. This minimizes the impact
+                radius of any potential compromise, allowing private keys to
+                remain cold and secure.
+              </p>
+            </details>
           </div>
         </div>
       </section>

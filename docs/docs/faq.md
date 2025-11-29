@@ -18,6 +18,8 @@ The delegation is limited to the exact subscription amount and duration you appr
 
 Systems like x402 require clients to sign transactions with internet-connected private keys, creating "hot" wallets that are inherently risky. Tributary replaces this with a public contract that states clear limits on withdrawals. A single, well-reviewed delegation signature is more secure than repeatedly approving transactions from potentially malicious websites. The contract's transparency and revocability provide better protection than trusting hot keys.
 
+Unlike protocols where private keys must be accessible to AI agents or bots—granting access to your entire wallet and all assets—Tributary's delegation is limited to a specific token (e.g., USDC) and a predefined amount. This significantly reduces the impact radius of any potential compromise, allowing private keys to remain cold and secure.
+
 ## Adoption and Use Cases
 
 ### Why recurring payments? Don't users prefer one-time payments in DeFi?
